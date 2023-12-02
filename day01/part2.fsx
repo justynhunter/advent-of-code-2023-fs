@@ -1,8 +1,8 @@
 #! dotnet fsi
-open System
+open System.Text.RegularExpressions
 open System.IO
 
-let getDigits (line:string) =
+let extractNumber (line:string) =
   line
   |> _.Replace("zero", "z0o")
   |> _.Replace("one", "o1e")
@@ -14,12 +14,12 @@ let getDigits (line:string) =
   |> _.Replace("seven", "s7n")
   |> _.Replace("eight", "e8t")
   |> _.Replace("nine", "n9e")
-  |> String.collect (fun c -> if Char.IsDigit(c) then c.ToString() else "" )
-  |> (fun l -> $"{Seq.head l}{Seq.last l}")
+  |> fun l -> Regex.Replace(l, @"[^\d]", "")
+  |> fun l -> $"{Seq.head l}{Seq.last l}"
   |> int
 
 
 File.ReadAllLines("./input.txt")
-|> Seq.map getDigits
+|> Seq.map extractNumber
 |> Seq.sum
 |> printfn "%d"
